@@ -129,11 +129,9 @@ class ProjectController extends Controller
         //faccio l'update con il mass assignment
         $project->update($data);
         
-        if( isset($data['technologies'])){
-            $project->technologies()->sync($data['technologies']);
-        }   else {
-            $project->tags()->sync([]);
-        }
+        $technologies = isset($data['technologies']) ? $data['technologies'] : [];
+        $project->technologies()->sync($technologies);
+
         //faccio un redirect a comics.show della risorsa aggiornata
         return redirect()->route('admin.projects.show', $project->slug)->with('message', "$old_title has been modified!");
     }
