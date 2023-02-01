@@ -34,6 +34,15 @@
                     <p class="card-text"><strong>Customer:</strong> {{$project->customer}}</p>
                     <p class="card-text"><strong>Version:</strong> v{{$project->version}}</p>
                     <p class="card-text"><strong>Type:</strong> {{$project->type?->name ?: 'No Type'}}</p>
+                    <p class="card-text"><strong>Technologies:</strong> 
+                        @if ($project->technologies->isNotEmpty())
+                            @foreach ($project->technologies as $technology)
+                                <span class="badge text-bg-dark">{{$technology->name}}</span>
+                            @endforeach
+                        @else
+                            <span class="badge text-bg-dark">No Technology</span>
+                        @endif
+                    </p>
 
                     {{-- BUTTONS --}}
                     <div>

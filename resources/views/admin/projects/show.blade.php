@@ -31,7 +31,15 @@
                     
                 
                 </p>
+                <p class="card-text"><strong>Technologies:</strong> 
+                    @if ($project->technologies)
+                        @foreach ($project->technologies as $technology)
+                            <span class="badge text-bg-dark">{{$technology->name}}</span>
+                        @endforeach
+                    @endif
+                </p>
                 <p class="card-text"><strong>Description:</strong> {{$project->description}}</p>
+
                 <div>
                     <a href="{{route('admin.projects.edit', $project->slug)}}" class="btn btn-warning"><i class="fa-solid fa-pen"></i></a>
                     <form action="{{route('admin.projects.destroy', $project->slug)}}" class="d-inline-block" method="POST">
