@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -31,8 +32,9 @@ class ProjectController extends Controller
     public function create()
     {
         $types = Type::all();
+        $technologies = Technology::all();
 
-        return view('admin.projects.create', compact('types'));
+        return view('admin.projects.create', compact('types', 'technologies'));
     }
 
     /**
@@ -43,11 +45,10 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
+        
         //prendo tutti i dati
         $data = $request->validated();
-
         
-
         //creo l'oggetto model | posso copiare questa parte dal seeder
         $new_project = new Project();
 
@@ -65,9 +66,10 @@ class ProjectController extends Controller
         //salvo (creo a db la riga)
         $new_project ->save(); //a questo punto l'autoincrement del db assegna l'id al nuovo elemento
 
-        //dove reindirizzo l'utente una volta che crea l'elemento? --> 
-        //magari all'index o allo show in modo che possa vedere l'elemento appena creato
-         
+        if( isset($data['technologies'])){
+            $new_project->technologies()->sync($data['technologies']);
+        }
+            
         //redirect a show
         return redirect()->route('admin.projects.show', $new_project->slug)->with('message', 'Project created!');
 
@@ -95,8 +97,9 @@ class ProjectController extends Controller
     {
 
         $types = Type::all();
+        $technologies = Technology::all();
 
-        return view('admin.projects.edit', compact('project', 'types'));
+        return view('admin.projects.edit', compact('project', 'types', 'technologies'));
     }
 
     /**
@@ -125,7 +128,12 @@ class ProjectController extends Controller
         
         //faccio l'update con il mass assignment
         $project->update($data);
- 
+        
+        if( isset($data['technologies'])){
+            $project->technologies()->sync($data['technologies']);
+        }   else {
+            $project->tags()->sync([]);
+        }
         //faccio un redirect a comics.show della risorsa aggiornata
         return redirect()->route('admin.projects.show', $project->slug)->with('message', "$old_title has been modified!");
     }
